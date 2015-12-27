@@ -1,0 +1,86 @@
+---
+title: "Stat_inf_pr1"
+author: "Harsha"
+date: "Sunday, December 27, 2015"
+output: html_document
+---
+#Project 1
+
+In this project you will investigate the exponential distribution in R and compare it with the Central Limit Theorem. The exponential distribution can be simulated in R with rexp(n, lambda) where lambda is the rate parameter. The mean of exponential distribution is 1/lambda and the standard deviation is also 1/lambda. Set lambda = 0.2 for all of the simulations. You will investigate the distribution of averages of 40 exponentials. Note that you will need to do a thousand simulations.
+
+Illustrate via simulation and associated explanatory text the properties of the distribution of the mean of 40 exponentials.  You should
+1. Show the sample mean and compare it to the theoretical mean of the distribution.
+2. Show how variable the sample is (via variance) and compare it to the theoretical variance of the distribution.
+3. Show that the distribution is approximately normal.
+
+
+#Overview
+
+1000 simulations of 40 samples of exponential distribution would be investigated. The sample means, standard deviation would be compared with the theoritical mean and the standard deviation. 
+
+The exponential distribution is defined by lambda - Mean is 1/lambda and the standard deviation is also 1/lamdba
+  
+#Samples simulation
+
+Samples are generated with rexp function. Exploration is done with head and summary on the the data. Data has 40 rows and 1000 columns. Each column represents a sample. Using column means, each sample mean is found out.
+                                                                      
+```{r, echo = TRUE}
+n <- 40
+sim <- 1000
+lambda <- 0.2
+
+data <- replicate(sim, rexp(n, lambda))
+
+nrow(data)
+ncol(data)
+
+
+data_with_mn <- rbind(data, colMeans(data))
+
+nrow(data_with_mn)
+
+sample_means <- data_with_mn[41,]
+
+```
+```{r, echo=TRUE, results='hide'}
+head(data)
+summary(data)
+```
+
+
+#Q1 and 2
+
+1. Show the sample mean and compare it to the theoretical mean of the distribution.
+2. Show how variable the sample is (via variance) and compare it to the theoretical variance of the distribution.
+
+
+```{r, echo=TRUE}
+thmean <- 1/lambda
+thsd <- (1/lambda)/sqrt(n)
+
+calcmean <- mean(sample_means)
+calcsd <- sd(sample_means)
+
+thmean
+calcmean
+
+thsd
+calcsd
+
+```
+It is to be noted that the theoritical mean and the calculated means are close. The same can be said about the standard deviation (a measure of variance)
+
+#Q3
+3. Show that the distribution is approximately normal.
+
+
+
+```{r, echo=TRUE}
+x <- seq(min(sample_means), max(sample_means), length=100)
+y <- dnorm(x, mean=1/lambda, sd=(1/lambda/sqrt(n)))
+
+hist(sample_means, freq = F, breaks = n)
+lines(x, y, pch=15, col="red", lty=5)
+```
+
+It can be seen that the distribution of sample means is roughly normal with the mean around 5.
