@@ -1,0 +1,84 @@
+---
+title: "Stat_inf_pr2"
+author: "Harsha"
+date: "Sunday, December 27, 2015"
+output: html_document
+---
+#Project 2
+
+#Problem statement
+
+Analyze the ToothGrowth data in the R datasets package. 
+1) Load the ToothGrowth data and perform some basic exploratory data analyses 
+2) Provide a basic summary of the data.
+3) Use confidence intervals and/or hypothesis tests to compare tooth growth by supp and dose. (Only use the techniques from class, even if there's other approaches worth considering)
+4) State your conclusions and the assumptions needed for your conclusions. 
+
+#Q1 and 2
+```{r, echo=TRUE}
+
+library(lattice)
+
+data(ToothGrowth)
+plot(ToothGrowth)
+
+```
+
+From the plot it's evident that 1.5 dosage value does not exist. This can be removed from the data by converting as factors.
+
+```{r, echo=TRUE}
+
+ToothGrowth$dose<-as.factor(ToothGrowth$dose)
+summary(ToothGrowth$dose)
+summary(ToothGrowth)
+
+xyplot(len~dose|supp, ToothGrowth,
+       main="Plots by supplement type and dose",
+       ylab="Length", xlab="Dose")
+
+```
+
+It would help if we get the mean based on the supplement
+
+The box plot that shows the distribution of the quartiles would help in analysing the data
+
+```{r, echo=TRUE}
+split_data_supp = split(ToothGrowth$len, ToothGrowth$supp)
+sapply(split_data_supp, mean)
+sapply(split_data_supp, var)
+
+boxplot(len ~ supp * dose, ToothGrowth, col="blue", ylab=" Length", xlab="Supplement & Dose",main="Box plot that shows tooth length distribution based on supplement and dosage") 
+
+```
+
+#Q3
+
+The distribution shows the effect of dosage but the same cannot be said about the supplement. However t.test is to be used to confirm. The null hypothesis is that suplement or dosage doesn't make a difference
+
+First let's see whether supplement has made any difference. Since variances are far, var.equal = FALSE
+
+```{r, echo=TRUE}
+t.test(ToothGrowth$len[ToothGrowth$supp=="OJ"], ToothGrowth$len[ToothGrowth$supp=="VC"], paired = FALSE, var.equal = FALSE)
+
+```
+P value is 0.06. So we cannot conclude about the supplement. 
+
+Now let's check the dosage quantity
+
+```{r, echo=TRUE}
+t.test(ToothGrowth$len[ToothGrowth$dose==2], ToothGrowth$len[ToothGrowth$dose==1], paired = FALSE, var.equal = TRUE)
+
+t.test(ToothGrowth$len[ToothGrowth$dose==2], ToothGrowth$len[ToothGrowth$dose==0.5], paired = FALSE, var.equal = TRUE)
+
+```
+The results show that there's an effect of the dosage quantity on tooth length.
+
+#Conclusion
+The dosage quanity has an effect on the tooth length (increases with increase) but the same cannot be said about the supplement. 
+
+#Q4
+#Assumptions
+Experiment is assumed to be randomly assigning the dosage and supplement to the subject. 
+```{r, echo=TRUE}
+
+```
